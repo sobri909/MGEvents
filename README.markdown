@@ -21,6 +21,7 @@ pod 'MGEvents'
 [box onChangeOf:@"selected" do:^{
     NSLog(@"the new selected value is: %d", box.selected);
 }];
+```
 
 ### Control Event Observing
 
