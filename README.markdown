@@ -1,12 +1,19 @@
 ## MGEvents
 
-**MGEvents** provides any extremely lightweight API for keypath observing, UIControl event handling, and observing and triggering custom events.
+**MGEvents** provides any extremely lightweight API for keypath observing, UIControl event
+handling, and observing and triggering custom events.
 
 ### CocoaPods Setup
 
 ```
 pod 'MGEvents'
 ```
+
+### Examples
+
+```objc
+#import <MGEvents/MGEvents.h>
+``` 
 
 ### Keypath Observing
 
