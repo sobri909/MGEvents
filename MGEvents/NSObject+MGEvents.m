@@ -135,6 +135,12 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
   };
 }
 
+- (void)onChangeOfAny:(NSArray *)keypaths do:(Block)block {
+  for (NSString *keypath in keypaths) {
+    [self onChangeOf:keypath do:block];
+  }
+}
+
 #pragma mark - Getters
 
 - (NSMutableDictionary *)MGEventHandlers {

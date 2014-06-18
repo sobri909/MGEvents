@@ -72,6 +72,16 @@ On change of the given keypath, perform the given block.
 */
 - (void)onChangeOf:(NSString *)keypath do:(Block)block;
 
+/**
+On change of any of the given keypaths, perform the given block.
+
+    [box onChangeOfAny:@[@"selected", @"highlighted"] do:^{
+        NSLog(@"my selected state is: %@", box.selected ? @"ON" : @"OFF");
+        NSLog(@"my highlighted state is: %@", box.highlighted ? @"ON" : @"OFF");
+    }];
+*/
+- (void)onChangeOfAny:(NSArray *)keypaths do:(Block)block;
+
 @property (nonatomic, copy) Block onDealloc;
 
 @end
