@@ -47,4 +47,4 @@ Then trigger the event:
 
 ### Further Options
 
-See the [API reference](http://www.bigpaua.com/MGEvents/index.html) for more details.
+See the [API reference](http://cocoadocs.org/docsets/MGEvents) for more details.
