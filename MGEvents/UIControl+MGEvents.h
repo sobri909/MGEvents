@@ -19,7 +19,7 @@ When a control event is triggered of the given kind, perform the given block.
         NSLog(@"i've been tapped!");
     }];
 */
-- (void)onControlEvent:(UIControlEvents)controlEvent do:(Block)handler;
+- (void)onControlEvent:(UIControlEvents)controlEvent do:(MGBlock)handler;
 
 /**
 * Remove all event handlers for the given control event.

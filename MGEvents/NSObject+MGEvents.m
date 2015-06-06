@@ -18,19 +18,19 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
 
 #pragma mark - Custom events
 
-- (void)on:(NSString *)eventName do:(Block)handler {
+- (void)on:(NSString *)eventName do:(MGBlock)handler {
   [self on:eventName do:handler once:NO context:NO];
 }
 
-- (void)on:(NSString *)eventName doOnce:(Block)handler {
+- (void)on:(NSString *)eventName doOnce:(MGBlock)handler {
   [self on:eventName do:handler once:YES context:NO];
 }
 
-- (void)on:(NSString *)eventName doWithContext:(BlockWithContext)handler {
+- (void)on:(NSString *)eventName doWithContext:(MGBlockWithContext)handler {
   [self on:eventName do:(Block)handler once:NO context:YES];
 }
 
-- (void)on:(NSString *)eventName do:(Block)handler once:(BOOL)once
+- (void)on:(NSString *)eventName do:(MGBlock)handler once:(BOOL)once
    context:(BOOL)isContextBlock {
 
   // get all handlers for this event type
@@ -48,15 +48,15 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
   }
 }
 
-- (void)when:(id)object does:(NSString *)eventName do:(Block)handler {
+- (void)when:(id)object does:(NSString *)eventName do:(MGBlock)handler {
     [self when:object does:eventName do:handler context:NO];
 }
 
-- (void)when:(id)object does:(NSString *)eventName doWithContext:(BlockWithContext)handler {
+- (void)when:(id)object does:(NSString *)eventName doWithContext:(MGBlockWithContext)handler {
     [self when:object does:eventName do:(Block)handler context:YES];
 }
 
-- (void)when:(NSObject *)object does:(NSString *)eventName do:(Block)handler
+- (void)when:(NSObject *)object does:(NSString *)eventName do:(MGBlock)handler
       context:(BOOL)isContextBlock {
 
     // get the proxy handlers array
@@ -100,10 +100,10 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
             continue;
         }
         if (handlerDict[@"blockWithContext"]) {
-            BlockWithContext block = handlerDict[@"blockWithContext"];
+            MGBlockWithContext block = handlerDict[@"blockWithContext"];
             block(context);
         } else if (handlerDict[@"block"]) {
-            Block block = handlerDict[@"block"];
+            MGBlock block = handlerDict[@"block"];
             block();
         }
         if ([handlerDict[@"once"] boolValue]) {
@@ -114,7 +114,7 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
 
 #pragma mark - Property observing
 
-- (void)onChangeOf:(NSString *)keypath do:(Block)block {
+- (void)onChangeOf:(NSString *)keypath do:(MGBlock)block {
 
   // get observers for this keypath
   NSMutableArray *observers = self.MGObservers[keypath];
@@ -127,7 +127,7 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
   // make and store an observer
   MGObserver *observer = [MGObserver observerFor:self keypath:keypath block:block];
   [observers addObject:observer];
-    
+
   __unsafe_unretained id _self = self;
   __unsafe_unretained id _observer = observer;
   observer.onDealloc = ^{
@@ -135,7 +135,7 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
   };
 }
 
-- (void)onChangeOfAny:(NSArray *)keypaths do:(Block)block {
+- (void)onChangeOfAny:(NSArray *)keypaths do:(MGBlock)block {
   for (NSString *keypath in keypaths) {
     [self onChangeOf:keypath do:block];
   }
@@ -161,7 +161,7 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
   return observers;
 }
 
-- (Block)onDealloc {
+- (MGBlock)onDealloc {
   MGDeallocAction *wrapper = objc_getAssociatedObject(self, MGDeallocActionKey);
   return wrapper.block;
 }
@@ -178,7 +178,7 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
       OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (void)setOnDealloc:(Block)block {
+- (void)setOnDealloc:(MGBlock)block {
   MGDeallocAction *wrapper = objc_getAssociatedObject(self, MGDeallocActionKey);
   if (!wrapper) {
     wrapper = MGDeallocAction.new;

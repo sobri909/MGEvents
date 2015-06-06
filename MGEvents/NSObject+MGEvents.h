@@ -21,13 +21,13 @@ When a custom event is triggered with the given name, perform the given block.
         NSLog(@"the earth has changed shape");
     }];
 */
-- (void)on:(NSString *)eventName do:(Block)handler;
+- (void)on:(NSString *)eventName do:(MGBlock)handler;
 
 /**
 * When a custom event is triggered with the given name, perform the given block
 * once. The block will not be performed on future triggering of the same event.
 */
-- (void)on:(NSString *)eventName doOnce:(Block)handler;
+- (void)on:(NSString *)eventName doOnce:(MGBlock)handler;
 
 /**
 When a custom event is triggered with the given name, perform the given block.
@@ -38,10 +38,10 @@ The block may potentially be provided a context object.
         NSLog(@"some details about the shape change: %@", context);
     }];
 */
-- (void)on:(NSString *)eventName doWithContext:(BlockWithContext)handler;
+- (void)on:(NSString *)eventName doWithContext:(MGBlockWithContext)handler;
 
-- (void)when:(id)object does:(NSString *)eventName do:(Block)handler;
-- (void)when:(id)object does:(NSString *)eventName doWithContext:(BlockWithContext)handler;
+- (void)when:(id)object does:(NSString *)eventName do:(MGBlock)handler;
+- (void)when:(id)object does:(NSString *)eventName doWithContext:(MGBlockWithContext)handler;
 
 /** @name Custom event triggering */
 
@@ -70,7 +70,7 @@ On change of the given keypath, perform the given block.
         NSLog(@"my selected state changed to: %@", box.selected ? @"ON" : @"OFF");
     }];
 */
-- (void)onChangeOf:(NSString *)keypath do:(Block)block;
+- (void)onChangeOf:(NSString *)keypath do:(MGBlock)block;
 
 /**
 On change of any of the given keypaths, perform the given block.
@@ -80,8 +80,8 @@ On change of any of the given keypaths, perform the given block.
         NSLog(@"my highlighted state is: %@", box.highlighted ? @"ON" : @"OFF");
     }];
 */
-- (void)onChangeOfAny:(NSArray *)keypaths do:(Block)block;
+- (void)onChangeOfAny:(NSArray *)keypaths do:(MGBlock)block;
 
-@property (nonatomic, copy) Block onDealloc;
+@property (nonatomic, copy) MGBlock onDealloc;
 
 @end

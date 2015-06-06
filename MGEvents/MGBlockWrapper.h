@@ -2,14 +2,14 @@
 //  Created by matt on 24/08/12.
 //
 
-typedef void(^Block)();
-typedef void(^BlockWithContext)(id context);
+typedef void(^MGBlock)();
+typedef void(^MGBlockWithContext)(id context);
 
 @interface MGBlockWrapper : NSObject
 
-@property (nonatomic, copy) Block block;
+@property (nonatomic, copy) MGBlock block;
 
-+ (MGBlockWrapper *)wrapperForBlock:(Block)block;
++ (MGBlockWrapper *)wrapperForBlock:(MGBlock)block;
 - (void)doit;
 
 @end

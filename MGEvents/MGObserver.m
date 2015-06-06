@@ -7,7 +7,7 @@
 @implementation MGObserver
 
 + (MGObserver *)observerFor:(NSObject *)object keypath:(NSString *)keypath
-    block:(Block)block {
+    block:(MGBlock)block {
   MGObserver *observer = [[MGObserver alloc] init];
   observer.block = block;
   [object addObserver:observer forKeyPath:keypath options:0 context:nil];

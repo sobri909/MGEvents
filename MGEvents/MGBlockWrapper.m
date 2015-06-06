@@ -6,7 +6,7 @@
 
 @implementation MGBlockWrapper
 
-+ (MGBlockWrapper *)wrapperForBlock:(Block)block {
++ (MGBlockWrapper *)wrapperForBlock:(MGBlock)block {
   MGBlockWrapper *wrapper = [[MGBlockWrapper alloc] init];
   wrapper.block = block;
   return wrapper;
