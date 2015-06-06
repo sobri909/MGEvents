@@ -27,7 +27,7 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
 }
 
 - (void)on:(NSString *)eventName doWithContext:(MGBlockWithContext)handler {
-  [self on:eventName do:(Block)handler once:NO context:YES];
+  [self on:eventName do:(MGBlock)handler once:NO context:YES];
 }
 
 - (void)on:(NSString *)eventName do:(MGBlock)handler once:(BOOL)once
@@ -53,7 +53,7 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
 }
 
 - (void)when:(id)object does:(NSString *)eventName doWithContext:(MGBlockWithContext)handler {
-    [self when:object does:eventName do:(Block)handler context:YES];
+    [self when:object does:eventName do:(MGBlock)handler context:YES];
 }
 
 - (void)when:(NSObject *)object does:(NSString *)eventName do:(MGBlock)handler
