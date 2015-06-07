@@ -7,9 +7,9 @@
 
 @interface MGObserver : NSObject
 
-@property (nonatomic, copy) Block block;
+@property (nonatomic, copy) MGBlock block;
 
 + (MGObserver *)observerFor:(NSObject *)object keypath:(NSString *)keypath
-    block:(Block)block;
+    block:(MGBlock)block;
 
 @end

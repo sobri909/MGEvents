@@ -9,7 +9,7 @@ static char *MGEventHandlersKey = "MGEventHandlersKey";
 
 @implementation UIControl (MGEvents)
 
-- (void)onControlEvent:(UIControlEvents)controlEvent do:(Block)handler {
+- (void)onControlEvent:(UIControlEvents)controlEvent do:(MGBlock)handler {
 
   // get all handlers for this control event
   NSMutableArray *handlers = self.MGEventHandlers[@((int)controlEvent)];

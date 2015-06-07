@@ -6,6 +6,6 @@
 
 @interface MGDeallocAction : NSObject
 
-@property (nonatomic, copy) Block block;
+@property (nonatomic, copy) MGBlock block;
 
 @end
