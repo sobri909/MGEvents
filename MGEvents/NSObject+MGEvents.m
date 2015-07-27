@@ -22,12 +22,24 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
   [self on:eventName do:handler once:NO context:NO];
 }
 
+- (void)onAnyOf:(NSArray *)eventNames do:(MGBlock)handler {
+    for (NSString *eventName in eventNames) {
+        [self on:eventName do:handler];
+    }
+}
+
 - (void)on:(NSString *)eventName doOnce:(MGBlock)handler {
   [self on:eventName do:handler once:YES context:NO];
 }
 
 - (void)on:(NSString *)eventName doWithContext:(MGBlockWithContext)handler {
   [self on:eventName do:(MGBlock)handler once:NO context:YES];
+}
+
+- (void)onAnyOf:(NSArray *)eventNames doWithContext:(MGBlockWithContext)handler {
+    for (NSString *eventName in eventNames) {
+        [self on:eventName doWithContext:handler];
+    }
 }
 
 - (void)on:(NSString *)eventName do:(MGBlock)handler once:(BOOL)once
@@ -52,8 +64,20 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
     [self when:object does:eventName do:handler context:NO];
 }
 
+- (void)when:(id)object doesAnyOf:(NSArray *)eventNames do:(MGBlock)handler {
+    for (NSString *eventName in eventNames) {
+        [self when:object does:eventName do:handler];
+    }
+}
+
 - (void)when:(id)object does:(NSString *)eventName doWithContext:(MGBlockWithContext)handler {
     [self when:object does:eventName do:(MGBlock)handler context:YES];
+}
+
+- (void)when:(id)object doesAnyOf:(NSArray *)eventNames doWithContext:(MGBlockWithContext)handler {
+    for (NSString *eventName in eventNames) {
+        [self when:eventName does:eventName doWithContext:handler];
+    }
 }
 
 - (void)when:(NSObject *)object does:(NSString *)eventName do:(MGBlock)handler

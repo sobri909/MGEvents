@@ -24,6 +24,15 @@ When a custom event is triggered with the given name, perform the given block.
 - (void)on:(NSString *)eventName do:(MGBlock)handler;
 
 /**
+ When a custom event is triggered by any of the given names, perform the given block.
+
+ [earth onAnyOf:@[@"ChangedShape", @"StoppedSpinning"] do:^{
+     NSLog(@"the earth has changed shape or stopped spinning");
+ }];
+ */
+- (void)onAnyOf:(NSArray *)eventNames do:(MGBlock)handler;
+
+/**
 * When a custom event is triggered with the given name, perform the given block
 * once. The block will not be performed on future triggering of the same event.
 */
@@ -40,8 +49,57 @@ The block may potentially be provided a context object.
 */
 - (void)on:(NSString *)eventName doWithContext:(MGBlockWithContext)handler;
 
+/**
+ When a custom event is triggered with any of the given names, perform the given block.
+ The block may potentially be provided a context object.
+
+ [earth onAnyOf:@[@"ChangedShape", @"StoppedSpinning"] doWithContext:^(id context) {
+     NSLog(@"the earth has changed shape or stopped spinning.");
+     NSLog(@"some details about the change: %@", context);
+ }];
+ */
+- (void)onAnyOf:(NSArray *)eventNames doWithContext:(MGBlockWithContext)handler;
+
+/**
+ When a particular object triggers the specified event, perform the given block.
+
+ [self when:earth does:@"ChangedShape" do:^{
+    NSLog(@"the earth has changed shape");
+ }];
+*/
+
 - (void)when:(id)object does:(NSString *)eventName do:(MGBlock)handler;
+
+/**
+ When a particular object triggeres any of the specified events, perform the given block.
+
+ [self when:earth doesAnyOf:@[@"ChangedShape", @"StoppedSpinning"] do:^{
+     NSLog(@"the earth has changed shape or stopped spinning");
+ }];
+ */
+
+- (void)when:(id)object doesAnyOf:(NSArray *)eventNames do:(MGBlock)handler;
+
+/**
+ When a particular object triggers the specified event, perform the given block.
+ The block may potentially be provided a context object.
+ [self when:earth does:@"ChangedShape" doWithContext:^(id context) {
+     NSLog(@"some details about the change: %@", context);
+ }];
+*/
+
 - (void)when:(id)object does:(NSString *)eventName doWithContext:(MGBlockWithContext)handler;
+
+/**
+ When a particular object triggers any of the specified events, perform the given block.
+ The block may potentially be provided a context object.
+ [self when:earth doesAnyOf:@[@"ChangedShape", @"StoppedSpinning"] doWithContext:^(id context) {
+ NSLog(@"some details about the change: %@", context);
+ }];
+ */
+
+- (void)when:(id)object doesAnyOf:(NSArray *)eventNames doWithContext:(MGBlockWithContext)handler;
+
 
 /** @name Custom event triggering */
 
