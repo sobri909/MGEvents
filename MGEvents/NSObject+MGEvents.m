@@ -76,7 +76,7 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
 
 - (void)when:(id)object doesAnyOf:(NSArray *)eventNames doWithContext:(MGBlockWithContext)handler {
     for (NSString *eventName in eventNames) {
-        [self when:eventName does:eventName doWithContext:handler];
+        [self when:object does:eventName doWithContext:handler];
     }
 }
 
