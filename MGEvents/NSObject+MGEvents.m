@@ -109,8 +109,37 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
     [theirHandlers addObject:[MGWeakHandler handlerWithDict:handlerDict]];
 }
 
+- (void)whenAny:(Class)objectOfClass does:(NSString *)eventName do:(MGBlock)handler {
+    [self when:objectOfClass does:[NSObject globalMGEventNameFor:eventName] do:handler];
+}
+
+- (void)whenAny:(Class)objectOfClass doesAnyOf:(NSArray *)eventNames do:(MGBlock)handler {
+    NSMutableArray *mangledEventNames = NSMutableArray.new;
+    for (NSString *eventName in eventNames) {
+        [mangledEventNames addObject:[NSObject globalMGEventNameFor:eventName]];
+    }
+    [self when:objectOfClass doesAnyOf:mangledEventNames.copy do:handler];
+}
+
+- (void)whenAny:(Class)objectOfClass does:(NSString *)eventName doWithContext:(MGBlockWithContext)handler {
+    [self when:objectOfClass does:[NSObject globalMGEventNameFor:eventName] doWithContext:handler];
+}
+
+- (void)whenAny:(Class)objectOfClass doesAnyOf:(NSArray *)eventNames doWithContext:(MGBlockWithContext)handler {
+    NSMutableArray *mangledEventNames = NSMutableArray.new;
+    for (NSString *eventName in eventNames) {
+        [mangledEventNames addObject:[NSObject globalMGEventNameFor:eventName]];
+    }
+    [self when:objectOfClass doesAnyOf:mangledEventNames.copy doWithContext:handler];
+}
+
 - (void)trigger:(NSString *)eventName {
-  [self trigger:eventName withContext:nil];
+    [self trigger:eventName withContext:nil];
+    if (!class_isMetaClass(object_getClass(self))) {
+        [self.class trigger:[NSObject globalMGEventNameFor:eventName]];
+    } else {
+        // breakpoint test
+    }
 }
 
 - (void)trigger:(NSString *)eventName withContext:(id)context {
@@ -188,6 +217,10 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
 - (MGBlock)onDealloc {
   MGDeallocAction *wrapper = objc_getAssociatedObject(self, MGDeallocActionKey);
   return wrapper.block;
+}
+
++ (NSString *)globalMGEventNameFor:(NSString *)objectEvent {
+    return [objectEvent stringByAppendingString:@"-MGGlobalEvent"];
 }
 
 #pragma mark - Setters

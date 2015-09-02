@@ -10,9 +10,13 @@
 
 @interface NSObject (MGEvents)
 
+#pragma mark - Custom event observing
+
 /** @name Custom event observing */
 
 @property (nonatomic, retain) NSMutableDictionary *MGEventHandlers;
+
+#pragma mark Observing specific objects
 
 /**
 When a custom event is triggered with the given name, perform the given block.
@@ -60,6 +64,8 @@ The block may potentially be provided a context object.
  */
 - (void)onAnyOf:(NSArray *)eventNames doWithContext:(MGBlockWithContext)handler;
 
+#pragma mark Observing other objects
+
 /**
  When a particular object triggers the specified event, perform the given block.
 
@@ -100,6 +106,49 @@ The block may potentially be provided a context object.
 
 - (void)when:(id)object doesAnyOf:(NSArray *)eventNames doWithContext:(MGBlockWithContext)handler;
 
+#pragma mark Listening for an event from any object
+
+/**
+ When any object of the given class triggers the specified event, perform the given block.
+
+ [self whenAny:Earth.class does:@"ChangedShape" do:^{
+ NSLog(@"an earth has changed shape");
+ }];
+ */
+
+- (void)whenAny:(Class)objectOfClass does:(NSString *)eventName do:(MGBlock)handler;
+
+/**
+ When any object triggeres any of the specified events, perform the given block.
+
+ [self when:earth doesAnyOf:@[@"ChangedShape", @"StoppedSpinning"] do:^{
+ NSLog(@"the earth has changed shape or stopped spinning");
+ }];
+ */
+
+- (void)whenAny:(Class)objectOfClass doesAnyOf:(NSArray *)eventNames do:(MGBlock)handler;
+
+/**
+ When any object triggers the specified event, perform the given block.
+ The block may potentially be provided a context object.
+ [self whenAny:Earth.class does:@"ChangedShape" doWithContext:^(id context) {
+ NSLog(@"some details about the change: %@", context);
+ }];
+ */
+
+- (void)whenAny:(Class)objectOfClass does:(NSString *)eventName doWithContext:(MGBlockWithContext)handler;
+
+/**
+ When any object triggers any of the specified events, perform the given block.
+ The block may potentially be provided a context object.
+ [self whenAny:Earth.class doesAnyOf:@[@"ChangedShape", @"StoppedSpinning"] doWithContext:^(id context) {
+ NSLog(@"some details about the change: %@", context);
+ }];
+ */
+
+- (void)whenAny:(Class)objectOfClass doesAnyOf:(NSArray *)eventNames doWithContext:(MGBlockWithContext)handler;
+
+#pragma mark - Custom event triggering
 
 /** @name Custom event triggering */
 
@@ -116,6 +165,8 @@ Trigger a custom event, providing context.
     [earth trigger:@"ChangedShape" withContext:@{ @"newShape": @"flat" }];
 */
 - (void)trigger:(NSString *)eventName withContext:(id)context;
+
+#pragma mark - Keypath observing
 
 /** @name Keypath observing */
 
