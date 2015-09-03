@@ -137,8 +137,6 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
     [self trigger:eventName withContext:nil];
     if (!class_isMetaClass(object_getClass(self))) {
         [self.class trigger:[NSObject globalMGEventNameFor:eventName]];
-    } else {
-        // breakpoint test
     }
 }
 
@@ -162,6 +160,9 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
         if ([handlerDict[@"once"] boolValue]) {
             [handlers removeObject:handler];
         }
+    }
+    if (!class_isMetaClass(object_getClass(self))) {
+        [self.class trigger:[NSObject globalMGEventNameFor:eventName] withContext:context];
     }
 }
 
