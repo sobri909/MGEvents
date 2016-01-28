@@ -31,6 +31,14 @@ pod 'MGEvents'
 }];
 ```
 
+Or in Swift: 
+
+```swift
+button.onControlEvent(.TouchUpInside) {
+    print("you touched me!")
+}
+```
+
 ### Custom Events and Triggers
 
 ```objc
