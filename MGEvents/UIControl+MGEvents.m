@@ -2,6 +2,8 @@
 //  Created by matt on 19/10/12.
 //
 
+#if !TARGET_OS_WATCH
+
 #import "UIControl+MGEvents.h"
 #import <objc/runtime.h>
 
@@ -56,3 +58,5 @@ static char *MGEventHandlersKey = "MGEventHandlersKey";
 }
 
 @end
+
+#endif
