@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/sobri909/MGEvents"
   s.license      = { :type => "BSD", :file => "LICENSE" }
   s.author       = { "Matt Greenfield" => "matt@bigpaua.com" }
-  s.source       = { :git => "https://github.com/sobri909/MGEvents.git", :tag => "1.0.3" }
+  s.source       = { :git => "https://github.com/sobri909/MGEvents.git", :tag => "1.1.0" }
   s.requires_arc = true
   s.watchos.deployment_target = '2.0'
   s.ios.deployment_target = '6.0'
