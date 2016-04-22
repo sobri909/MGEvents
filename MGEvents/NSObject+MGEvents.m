@@ -187,6 +187,19 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
   observer.onDealloc = ^{
       [_self removeObserver:_observer forKeyPath:keypath];
   };
+
+  // force this object to be thrown in the autorelease pool, and not
+  // be possible to be freed immediately by ARC if nothing is retaining the
+  // object.  This can cause a KVO exception on x86 if this happens.
+  static NSMutableArray *runloopRetainer;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    runloopRetainer = NSMutableArray.new;
+  });
+  [runloopRetainer addObject:self];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [runloopRetainer removeObject:self];
+  });
 }
 
 - (void)onChangeOfAny:(NSArray *)keypaths do:(MGBlock)block {
