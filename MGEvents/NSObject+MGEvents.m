@@ -9,6 +9,7 @@
 #import <objc/runtime.h>
 
 static char *MGObserversKey = "MGObserversKey";
+static char *MGObserverTokensKey = "MGObserverTokensKey";
 static char *MGEventHandlersKey = "MGEventHandlersKey";
 static char *MGDeallocActionKey = "MGDeallocActionKey";
 
@@ -168,15 +169,14 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
 
 #pragma mark - Property observing
 
-- (void)onChangeOf:(NSString *)keypath do:(MGBlock)block {
-
+- (id)onChangeOf:(NSString *)keypath do:(MGBlock)block {
   // get observers for this keypath
   NSMutableArray *observers = self.MGObservers[keypath];
   if (!observers) {
     observers = @[].mutableCopy;
     self.MGObservers[keypath] = observers;
-
   }
+
 
   // make and store an observer
   MGObserver *observer = [MGObserver observerFor:self keypath:keypath block:block];
@@ -184,6 +184,7 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
 
   __unsafe_unretained id _self = self;
   __unsafe_unretained id _observer = observer;
+  __weak id wObserver = observer;
   observer.onDealloc = ^{
       [_self removeObserver:_observer forKeyPath:keypath];
   };
@@ -191,21 +192,96 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
   // force this object to be thrown in the autorelease pool, and not
   // be possible to be freed immediately by ARC if nothing is retaining the
   // object.  This can cause a KVO exception on x86 if this happens.
+
   static NSMutableArray *runloopRetainer;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     runloopRetainer = NSMutableArray.new;
   });
-  [runloopRetainer addObject:self];
   dispatch_async(dispatch_get_main_queue(), ^{
-    [runloopRetainer removeObject:self];
+      [runloopRetainer addObject:self];
+      dispatch_async(dispatch_get_main_queue(), ^{
+          [runloopRetainer removeObject:self];
+      });
   });
+
+  return wObserver;
+}
+
+- (void)removeOnChangeOf:(NSString *)keypath forObserverToken:(id)observerToken {
+    if (!observerToken || ![observerToken isKindOfClass:MGObserver.class]) {
+        return;
+    }
+    MGObserver *observer = observerToken;
+    if (![self.MGObservers[keypath] containsObject:observer]) {
+        return;
+    }
+    [self.MGObservers[keypath] removeObject:observer];
+    observer.onDealloc = nil;
+    [self removeObserver:observer forKeyPath:keypath];
 }
 
 - (void)onChangeOfAny:(NSArray *)keypaths do:(MGBlock)block {
   for (NSString *keypath in keypaths) {
     [self onChangeOf:keypath do:block];
   }
+}
+
+- (void)when:(NSString *)keypath changesOn:(id)object do:(MGBlock)block {
+    if (!keypath || !object || !block) {
+        return;
+    }
+    NSString *trigger = [@"MGTrigger_" stringByAppendingString:keypath];
+    [self when:object does:trigger do:^{
+        block();
+    }];
+    __weak id wObject = object;
+    MGObserver *token = [object onChangeOf:keypath do:^{
+        [wObject trigger:trigger];
+    }];
+
+    NSPointerArray *observerTokens = self.MGObserverTokens[keypath];
+    if (!observerTokens) {
+        observerTokens = NSPointerArray.weakObjectsPointerArray;
+        self.MGObserverTokens[keypath] = observerTokens;
+    }
+    [observerTokens addPointer:(__bridge void *)token];
+}
+
+- (void)unwatch:(NSString *)keypath on:(id)object {
+    if (!keypath || !object) {
+        return;
+    }
+    NSMutableArray *tokensToRemove = NSMutableArray.new;
+    NSMutableArray *indicesToRemove = NSMutableArray.new;
+    NSPointerArray *observerTokens = self.MGObserverTokens[keypath];
+
+    for (int i = 0; i < observerTokens.count; i++) {
+        MGObserver *observerToken = [observerTokens pointerAtIndex:i];
+        if (observerToken.object == object) {
+            [tokensToRemove addObject:observerToken];
+            [indicesToRemove addObject:@(i)];
+        }
+    }
+    for (MGObserver *token in tokensToRemove) {
+        [object removeOnChangeOf:keypath forObserverToken:token];
+    }
+    for (NSNumber *index in indicesToRemove) {
+        [observerTokens removePointerAtIndex:index.unsignedIntegerValue];
+    }
+    [observerTokens compact];
+}
+
+- (void)whenAnyOf:(NSArray *)keypaths changeOn:(id)object do:(MGBlock)block {
+    for (NSString *keyPath in keypaths) {
+        [self when:keyPath changesOn:object do:block];
+    }
+}
+
+- (void)unwatchAllOf:(NSArray *)keypaths on:(id)object {
+    for (NSString *keyPath in keypaths) {
+        [self unwatch:keyPath on:object];
+    }
 }
 
 #pragma mark - Getters
@@ -228,6 +304,15 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
   return observers;
 }
 
+- (NSMutableDictionary *)MGObserverTokens {
+    id tokens = objc_getAssociatedObject(self, MGObserverTokensKey);
+    if (!tokens) {
+        tokens = @{}.mutableCopy;
+        self.MGObserverTokens = tokens;
+    }
+    return tokens;
+}
+
 - (MGBlock)onDealloc {
   MGDeallocAction *wrapper = objc_getAssociatedObject(self, MGDeallocActionKey);
   return wrapper.block;
@@ -247,6 +332,11 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
 - (void)setMGObservers:(NSMutableDictionary *)observers {
   objc_setAssociatedObject(self, MGObserversKey, observers,
       OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (void)setMGObserverTokens:(NSMutableDictionary *)tokens {
+    objc_setAssociatedObject(self, MGObserverTokensKey, tokens,
+                             OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (void)setOnDealloc:(MGBlock)block {

@@ -179,7 +179,7 @@ On change of the given keypath, perform the given block.
         NSLog(@"my selected state changed to: %@", box.selected ? @"ON" : @"OFF");
     }];
 */
-- (void)onChangeOf:(NSString *)keypath do:(MGBlock)block;
+- (id)onChangeOf:(NSString *)keypath do:(MGBlock)block;
 
 /**
 On change of any of the given keypaths, perform the given block.
@@ -190,6 +190,43 @@ On change of any of the given keypaths, perform the given block.
     }];
 */
 - (void)onChangeOfAny:(NSArray *)keypaths do:(MGBlock)block;
+
+/**
+ On change of any of the given keypath on the specified object, perform the given block.
+
+    [self when:@"selected" changesOn:box do:^{
+        NSLog(@"my selected state is: %@", box.selected ? @"ON" : @"OFF");
+    }];
+ */
+- (void)when:(NSString *)kepath changesOn:(id)object do:(MGBlock)block;
+
+/**
+ Stop watching for changes on the given keypath and object.
+
+    [self unwatch:@"selected" on:box];
+    // previous blocks registered with [self when:@"selected" changesOn:box do:^{}]
+    // will no longer fire
+ */
+- (void)unwatch:(NSString *)keypath on:(id)object;
+
+/**
+ On change of any of the given keypaths on the specified object, perform the given block.
+
+    [self whenAnyOf:@[@"selected", @"highlighted"] changeOn:box do:^{
+        NSLog(@"my selected state is: %@", box.selected ? @"ON" : @"OFF");
+        NSLog(@"my highlighted state is: %@", box.highlighted ? @"ON" : @"OFF");
+    }];
+ */
+- (void)whenAnyOf:(NSArray *)keypaths changeOn:(id)object do:(MGBlock)block;
+
+/**
+ Stop watching for changes on the given keypaths and object.
+
+    [self unwatchAllOf:@[@"selected", @"highlighted"] on:box];
+    // previous blocks registered with [self whenAnyOf:@[@"selected", @"highlighted"] changeOn:box do:^{]
+    // will no longer fire
+ */
+- (void)unwatchAllOf:(NSArray *)keypaths on:(id)object;
 
 @property (nonatomic, copy) MGBlock onDealloc;
 
