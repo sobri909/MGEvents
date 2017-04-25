@@ -135,9 +135,6 @@ static char *MGDeallocActionKey = "MGDeallocActionKey";
 
 - (void)trigger:(NSString *)eventName {
     [self trigger:eventName withContext:nil];
-    if (!class_isMetaClass(object_getClass(self))) {
-        [self.class trigger:[NSObject globalMGEventNameFor:eventName]];
-    }
 }
 
 - (void)trigger:(NSString *)eventName withContext:(id)context {
