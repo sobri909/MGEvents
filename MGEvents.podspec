@@ -8,6 +8,6 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/sobri909/MGEvents.git", :tag => "1.2.0" }
   s.requires_arc = true
   s.watchos.deployment_target = '2.0'
-  s.ios.deployment_target = '6.0'
+  s.ios.deployment_target = '8.0'
   s.source_files = 'MGEvents/*.{h,m}'
 end
